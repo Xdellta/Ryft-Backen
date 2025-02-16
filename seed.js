@@ -86,6 +86,11 @@ async function seedDatabase() {
 		for (let chatUser of chatUsers) {
 			const amountOfMessages = faker.number.int({ min: 1, max: 20 });
 			for (let k = 0; k < amountOfMessages; k++) {
+				const randomDate = faker.date.recent({ days: 30 });
+				randomDate.setHours(faker.number.int({ min: 0, max: 23 }));
+				randomDate.setMinutes(faker.number.int({ min: 0, max: 59 }));
+				randomDate.setSeconds(faker.number.int({ min: 0, max: 59 }));
+		
 				await prisma.chatMessage.create({
 					data: {
 						message: faker.lorem.sentence(),
@@ -99,6 +104,7 @@ async function seedDatabase() {
 								chatUserId: chatUser.chatUserId,
 							},
 						},
+						createdAt: randomDate,
 					},
 				});
 			}
