@@ -487,6 +487,12 @@ async function getChatMessage(req, res) {
             return res.status(403).json({ message: 'User not in chat' });
         }
 
+        const totalMessages = await prisma.chatMessage.count({
+            where: { chatId }
+        });
+
+        const totalPages = Math.ceil(totalMessages / pageSize);
+
         const messages = await prisma.chatMessage.findMany({
             where: { chatId },
             include: {
@@ -510,7 +516,7 @@ async function getChatMessage(req, res) {
             date: message.createdAt
         }));
 
-        return res.status(200).json(formattedMessages);
+        return res.status(200).json({ messages: formattedMessages, totalPages });
     } catch (error) {
         return res.status(500).json({ message: 'Server error', error });
     }
